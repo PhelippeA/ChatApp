@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "550010765438",
+    "project_id": "phelps-chat",
+    "storage_bucket": "phelps-chat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550010765438:android:5750b3395caedd994a582f",
+        "android_client_info": {
+          "package_name": "com.phelpsdev.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550010765438-nslsm022rkein974fdurjqar0a1uuomo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0kKoO9i3x3Np1St1o7mTJDcIu2loJPkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550010765438-nslsm022rkein974fdurjqar0a1uuomo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
