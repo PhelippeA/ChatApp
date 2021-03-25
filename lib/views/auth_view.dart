@@ -11,21 +11,33 @@ class AuthView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<AuthView> {
-  // final _auth = FirebaseAuth.instance;
-  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
 
   Future<void> _handleSubmit(AuthData authData) async {
+    setState(() => _isLoading = true);
+
+    UserCredential _userCredential;
     try {
       if (authData.isSignup) {
-        print('dentro do cadastro');
-        print(authData.email + authData.password);
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        _userCredential = await _auth.createUserWithEmailAndPassword(
           email: authData.email,
           password: authData.password,
         );
+
+        final userData = {
+          'name': authData.name,
+          'email': authData.email,
+        };
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_userCredential.user.uid)
+            .set(userData);
+
+        print(_userCredential.user.uid);
       } else {
-        print('dentro do login');
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        _userCredential = await _auth.signInWithEmailAndPassword(
           email: authData.email,
           password: authData.password,
         );
@@ -38,18 +50,41 @@ class _AuthViewState extends State<AuthView> {
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
-      print(err);
     } catch (err) {
       print(err);
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // key: _scaffoldKey,
       backgroundColor: Theme.of(context).backgroundColor,
-      body: AuthForm(_handleSubmit),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(children: [
+              AuthForm(_handleSubmit),
+              if (_isLoading)
+                Positioned.fill(
+                  child: Container(
+                    margin: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                    ),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                )
+            ]),
+          ],
+        ),
+      ),
     );
   }
 }

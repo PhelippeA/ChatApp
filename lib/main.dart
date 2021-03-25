@@ -1,7 +1,7 @@
 import 'package:chat/views/auth_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'views/chat_view.dart';
 
 void main() async {
@@ -17,18 +17,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        backgroundColor: Colors.indigo[400],
-        accentColor: Colors.green,
-        accentColorBrightness: Brightness.light,
-        buttonTheme: ButtonTheme.of(context).copyWith(
-          buttonColor: Colors.black,
-          textTheme: ButtonTextTheme.primary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))
-        ),
-        visualDensity: VisualDensity.adaptivePlatformDensity
+          primarySwatch: Colors.indigo,
+          backgroundColor: Colors.indigo[400],
+          accentColor: Colors.green,
+          accentColorBrightness: Brightness.light,
+          buttonTheme: ButtonTheme.of(context).copyWith(
+              buttonColor: Colors.black,
+              textTheme: ButtonTextTheme.primary,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6))),
+          visualDensity: VisualDensity.adaptivePlatformDensity),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (ctx, userSnapshot) {
+          if (userSnapshot.hasData) 
+            return ChatView();
+          return AuthView();
+        },
       ),
-      home: AuthView(),
     );
   }
 }
