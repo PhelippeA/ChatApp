@@ -2,8 +2,8 @@ import 'package:chat/models/auth_data.dart';
 import 'package:chat/widgets/auth_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class AuthView extends StatefulWidget {
   @override
@@ -25,17 +25,24 @@ class _AuthViewState extends State<AuthView> {
           password: authData.password,
         );
 
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child(_userCredential.user.uid + '.jpg');
+
+        await ref.putFile(authData.image);
+        final imageUrl = await ref.getDownloadURL();
+
         final userData = {
           'name': authData.name,
           'email': authData.email,
+          'imageUrl': imageUrl,
         };
-
         await FirebaseFirestore.instance
             .collection('users')
             .doc(_userCredential.user.uid)
             .set(userData);
 
-        print(_userCredential.user.uid);
       } else {
         _userCredential = await _auth.signInWithEmailAndPassword(
           email: authData.email,
@@ -53,7 +60,7 @@ class _AuthViewState extends State<AuthView> {
     } catch (err) {
       print(err);
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

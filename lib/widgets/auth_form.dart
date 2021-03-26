@@ -20,9 +20,7 @@ class _AuthFormState extends State<AuthForm> {
   _submit() {
     bool isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
-    if (isValid) {
-      widget.onSubmit(_authData);
-    }
+
     if (_authData.image == null && _authData.isSignup) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -30,6 +28,10 @@ class _AuthFormState extends State<AuthForm> {
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
+      isValid = false;
+    }
+    if (isValid) {
+      widget.onSubmit(_authData);
     }
   }
 
@@ -51,8 +53,7 @@ class _AuthFormState extends State<AuthForm> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (_authData.isSignup)
-                      UserImagePicker(_handlePickedImage),
+                    if (_authData.isSignup) UserImagePicker(_handlePickedImage),
                     if (_authData.isSignup)
                       TextFormField(
                         initialValue: _authData.name,
